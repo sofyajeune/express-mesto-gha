@@ -1,13 +1,13 @@
 const Cards = require('../models/card');
 
-// Запрос для получения карточки
+// Запрос получения карточки
 exports.getCards = (req, res) => {
   Cards.find({})
     .then((card) => {
       if (card) {
         res.status(200).send({ data: card });
       } else {
-        res.status(400).send({ message: 'Карта не найдена!' });
+        res.status(400).send({ message: 'Запрашиваемая карточка не найдена!' });
       }
     })
     .catch(() => {
@@ -18,7 +18,7 @@ exports.getCards = (req, res) => {
     });
 };
 
-// Запрос создания карт
+// Запрос создания карточки
 exports.createCard = (req, res) => {
   // Достаем свойства из запроса
   const owner = req.user_id;
@@ -38,7 +38,6 @@ exports.createCard = (req, res) => {
     });
 };
 
-// Запрос удаления
 exports.deleteCard = (req, res) => {
   Cards.delete({})
     .then((card) => {
@@ -46,7 +45,7 @@ exports.deleteCard = (req, res) => {
     })
     .catch((err) => {
       if (err) {
-        res.status(404).send({ message: 'Карта с указанным ID не найдена!' });
+        res.status(404).send({ message: 'Карточка с указанным ID не найдена!' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка!' });
       }
@@ -54,14 +53,12 @@ exports.deleteCard = (req, res) => {
 };
 
 exports.likeCard = (res, req) => {
-  // eslint-disable-next-line no-underscore-dangle
   const owner = req.user._id;
 
   Cards.findByIdAndUpdate(
     req.params.cardId,
     owner,
-    // eslint-disable-next-line no-underscore-dangle
-    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+    { $addToSet: { likes: req.user._id } },
 
     { new: true },
   )
@@ -70,7 +67,7 @@ exports.likeCard = (res, req) => {
     })
     .catch((err) => {
       if (err) {
-        res.status(404).send({ message: 'Переданы некорректные данные для лайка.' });
+        res.status(404).send({ message: 'Переданы некорректные данные для функции лайка.' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка' });
       }
@@ -78,14 +75,12 @@ exports.likeCard = (res, req) => {
 };
 
 exports.dislikeCard = (res, req) => {
-  // eslint-disable-next-line no-underscore-dangle
   const owner = req.user._id;
 
   Cards.findByIdAndUpdate(
     req.params.cardId,
     owner,
-    // eslint-disable-next-line no-underscore-dangle
-    { $pull: { likes: req.user._id } }, // убрать _id из массива
+    { $pull: { likes: req.user._id } },
 
     { new: true },
   )
@@ -94,7 +89,7 @@ exports.dislikeCard = (res, req) => {
     })
     .catch((err) => {
       if (err) {
-        res.status(404).send({ message: 'Переданы некорректные данные для лайка.' });
+        res.status(404).send({ message: 'Переданы некорректные данные для функции лайка.' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка' });
       }

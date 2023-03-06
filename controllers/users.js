@@ -8,13 +8,13 @@ exports.getUsers = (req, res) => {
 
 exports.getUserById = (req, res) => {
   Users.findById(req.params.userId)
-  .then((user) => {
-    if (user) {
-      res.status(200).send({ data: user });
-    } else {
-      res.status(404).send({ message: 'Пользователь с указанными данными не найден!' });
-    }
-  })
+    .then((user) => {
+      if (user) {
+        res.status(200).send({ data: user });
+      } else {
+        res.status(404).send({ message: 'Пользователь с указанными данными не найден!' });
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(400).send({ message: 'Переданы некорректные данные пользователя!' });
@@ -46,7 +46,7 @@ exports.createUser = (req, res) => {
 
 exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
-  Users.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true  })
+  Users.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       res.status(200).send(user);
     })
@@ -80,5 +80,5 @@ exports.updateAvatar = (req, res) => {
       }
       return res.status(500).send({ message: 'Произошла ошибка!' });
     });
-// eslint-disable-next-line eol-last
+  // eslint-disable-next-line eol-last
 };

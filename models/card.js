@@ -1,7 +1,7 @@
 //
 const mongoose = require('mongoose');
 
-//Схема для карточек
+// Схема для карточек
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,

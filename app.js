@@ -27,19 +27,12 @@ app.use((req, res, next) => {
 
   next();
 });
-
 // вставьте сюда _id созданного в предыдущем пункте пользователя
-
 // Марштуризация
 app.use('/', usersRoutes);
 app.use('/', cardsRoutes);
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
-
-app.use((req, res, next) => {
-  return res.status(404).send({ message: 'Неправильный путь' })
-});
-app.use(cors());
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает

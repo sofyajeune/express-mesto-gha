@@ -38,7 +38,6 @@ exports.createCard = (req, res) => {
     });
 };
 
-
 // Запрос удаления
 exports.deleteCard = (req, res) => {
   Cards.delete({})

@@ -1,6 +1,6 @@
 const Cards = require('../models/card');
 
-// Запрос для получения карточки
+// Запрос для получения карточек
 exports.getCards = (req, res) => {
   Cards.find({})
     .then((card) => {

@@ -8,19 +8,16 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 2,
     maxlength: 30,
-    default: 'Sofya',
   },
   about: {
     type: String,
     required: true,
-    menlength: 2,
+    minlength: 2,
     maxlength: 30,
-    default: 'WebDev Beginner',
   },
   avatar: {
     type: String,
     required: true,
-    default: ' ',
   },
 });
 

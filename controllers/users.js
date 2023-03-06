@@ -40,9 +40,7 @@ exports.createUser = (req, res) => {
 
 exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
-
-  // eslint-disable-next-line no-underscore-dangle
-  Users.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
+  Users.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true  })
     .then((user) => {
       res.status(200).send(user);
     })

@@ -3,6 +3,7 @@ const Cards = require('../models/card');
 // Запрос для получения карточек
 exports.getCards = (req, res) => {
   Cards.find({})
+    .populate(['owner', 'likes'])
     .then((card) => {
       if (card) {
         res.status(200).send({ data: card });
@@ -21,13 +22,12 @@ exports.getCards = (req, res) => {
 // Запрос создания карт
 exports.createCard = (req, res) => {
   // Достаем свойства из запроса
-  const owner = req.user_id;
   const { name, link } = req.body;
+  const owner = req.user._id;
 
   Cards.create({ name, link, owner })
     .then((card) => {
-      Cards.find({}).populate(['owner', 'likes']);
-      res.status(200).send(card);
+      res.status(200).send({ data: card });
     })
     .catch((err) => {
       if (err) {
@@ -42,7 +42,7 @@ exports.createCard = (req, res) => {
 exports.deleteCard = (req, res) => {
   Cards.delete({})
     .then((card) => {
-      res.status(200).send(card);
+      res.status(200).send({ data: card });
     })
     .catch((err) => {
       if (err) {
@@ -54,13 +54,10 @@ exports.deleteCard = (req, res) => {
 };
 
 exports.likeCard = (res, req) => {
-  // eslint-disable-next-line no-underscore-dangle
   const owner = req.user._id;
-
   Cards.findByIdAndUpdate(
     req.params.cardId,
     owner,
-    // eslint-disable-next-line no-underscore-dangle
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
 
     { new: true },
@@ -78,15 +75,11 @@ exports.likeCard = (res, req) => {
 };
 
 exports.dislikeCard = (res, req) => {
-  // eslint-disable-next-line no-underscore-dangle
   const owner = req.user._id;
-
   Cards.findByIdAndUpdate(
     req.params.cardId,
     owner,
-    // eslint-disable-next-line no-underscore-dangle
     { $pull: { likes: req.user._id } }, // убрать _id из массива
-
     { new: true },
   )
     .then((card) => {

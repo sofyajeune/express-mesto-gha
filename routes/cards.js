@@ -4,7 +4,6 @@ const cardRoutes = require('express').Router();
 // Импорт запросов API
 const {
   getCards, createCard, deleteCard, likeCard, dislikeCard,
-// eslint-disable-next-line import/no-unresolved
 } = require('../controllers/cards');
 
 // Маршрут получения карт

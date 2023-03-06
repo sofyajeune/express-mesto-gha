@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
 
-
 // Создаем приложение
 const app = express();
 

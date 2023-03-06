@@ -40,7 +40,7 @@ exports.createCard = (req, res) => {
 
 // Запрос удаления
 exports.deleteCard = (req, res) => {
-  Cards.delete({})
+  Cards.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       res.status(200).send({ data: card });
     })

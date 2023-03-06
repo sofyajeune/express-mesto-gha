@@ -22,13 +22,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Подключаемся к монго по адресу (mestodb — имя базы данных, которая будет создана.)
 mongoose.connect('mongodb://localhost:27017/mestodb ');
 
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '64048c79c770c9c1ec4a4819',
-//   };
+app.use((req, res, next) => {
+  req.user = {
+    _id: '64048c79c770c9c1ec4a4819',
+  };
 
-//   next();
-// });
+  next();
+});
 // вставьте сюда _id созданного в предыдущем пункте пользователя
 // Марштуризация
 app.use('/', usersRoutes);

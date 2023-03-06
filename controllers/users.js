@@ -8,7 +8,13 @@ exports.getUsers = (req, res) => {
 
 exports.getUserById = (req, res) => {
   Users.findById(req.params.userId)
-    .then((user) => res.status(200).send(user))
+  .then((user) => {
+    if (user) {
+      res.status(200).send({ data: user });
+    } else {
+      res.status(404).send({ message: 'Пользователь с указанными данными не найден!' });
+    }
+  })
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(400).send({ message: 'Переданы некорректные данные пользователя!' });

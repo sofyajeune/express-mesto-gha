@@ -3,19 +3,12 @@ const Cards = require('../models/card');
 // Запрос для получения карточек
 exports.getCards = (req, res) => {
   Cards.find({})
-    .populate(['owner', 'likes'])
     .then((card) => {
-      if (card) {
-        res.status(200).send({ data: card });
-      } else {
-        res.status(400).send({ message: 'Карта не найдена!' });
-      }
+      res.status(200).send({ data: card });
+      res.status(400).send({ message: 'Карта не найдена!' });
     })
     .catch(() => {
       res.status(500).send({ message: 'Произошла ошибка!' });
-    })
-    .finally(() => {
-      console.log(`req.body = ${req.body}, result = ${res}`);
     });
 };
 
@@ -30,10 +23,10 @@ exports.createCard = (req, res) => {
       res.status(200).send({ data: card });
     })
     .catch((err) => {
-      if (err) {
-        res.status(400).send(err.message);
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Данные некорректны!' });
       } else {
-        res.status(500).send('Произошла ошибка!');
+        res.status(500).send({ message: 'Произошла ошибка!' });
       }
     });
 };
@@ -42,11 +35,15 @@ exports.createCard = (req, res) => {
 exports.deleteCard = (req, res) => {
   Cards.findByIdAndRemove(req.params.cardId)
     .then((card) => {
-      res.status(200).send({ data: card });
+      if (card) {
+        res.status(200).send({ message: 'Карта удалена' });
+      } else {
+        res.status(404).send({ message: 'Карта не найдена' });
+      }
     })
     .catch((err) => {
-      if (err) {
-        res.status(404).send({ message: 'Карта с указанным ID не найдена!' });
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Данные некорректны!' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка!' });
       }
@@ -63,13 +60,17 @@ exports.likeCard = (res, req) => {
     { new: true },
   )
     .then((card) => {
-      res.status(200).send({ data: card });
+      if (card) {
+        res.status(200).send({ message: 'Лайк есть!' });
+      } else {
+        res.status(404).send({ message: 'Данные некорректны!' });
+      }
     })
     .catch((err) => {
-      if (err) {
-        res.status(404).send({ message: 'Переданы некорректные данные для лайка.' });
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Данные введены некорректно' });
       } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+        res.status(500).send({ message: 'Произошла ошибка!' });
       }
     });
 };
@@ -83,13 +84,17 @@ exports.dislikeCard = (res, req) => {
     { new: true },
   )
     .then((card) => {
-      res.status(200).send({ data: card });
+      if (card) {
+        res.status(200).send({ message: 'Лайк удалён!' });
+      } else {
+        res.status(404).send({ message: 'Карта не найдена' });
+      }
     })
     .catch((err) => {
-      if (err) {
-        res.status(404).send({ message: 'Переданы некорректные данные для лайка.' });
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Данные введены некорректно' });
       } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+        res.status(500).send({ message: 'Произошла ошибка!' });
       }
     });
 };

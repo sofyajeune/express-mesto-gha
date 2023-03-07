@@ -62,15 +62,8 @@ exports.updateProfile = (req, res) => {
 
 exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  Users.findByIdAndUpdate(
-    req.user._id,
-    { avatar },
-    {
-      new: true,
-      runValidators: true,
-      upsert: true,
-    },
-  )
+  // eslint-disable-next-line max-len
+  Users.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true, upsert: true })
     .then((user) => {
       res.status(200).send(user);
     })

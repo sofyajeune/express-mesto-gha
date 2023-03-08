@@ -1,5 +1,4 @@
 const Users = require('../models/user');
-// const bcrypt = require('bcryptjs'); // импортируем bcrypt
 
 exports.getUsers = (req, res) => {
   Users.find({})
@@ -18,31 +17,27 @@ exports.getUserById = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные пользователя!' });
+        res.status(400).send({ message: 'Переданы некорректные данные пользователя!' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка!' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка!' });
     });
 };
 
 exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
+
   Users.create({ name, about, avatar })
-    // bcrypt.hash(req.body.password, 10)
-    // .then(hash => User.create({
-    //  email: req.body.email,
-    //  password: hash, // записываем хеш в базу
-    // }))
-    // email: req.body.email,
-    // password: req.body.password,
     // user - ответ сервера
     .then((user) => {
       res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные' });
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -54,24 +49,29 @@ exports.updateProfile = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные профиля!' });
+        res.status(400).send({ message: 'Переданы некорректные данные профиля!' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка!' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка!' });
     });
 };
 
 exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  // eslint-disable-next-line max-len
-  Users.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true, upsert: true })
+
+  Users.findByIdAndUpdate(
+    req.user._id,
+    { avatar },
+    { new: true, runValidators: true, upsert: true },
+  )
     .then((user) => {
       res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные аватара!' });
+        res.status(400).send({ message: 'Переданы некорректные данные аватара!' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка!' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка!' });
     });
-  // eslint-disable-next-line eol-last
 };

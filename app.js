@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Импортируем модули
 const express = require('express');
 const mongoose = require('mongoose');
@@ -13,7 +14,6 @@ const { PORT = 3000 } = process.env;
 
 app.get('/', (req, res) => {
   res.send('Приложение работает!');
-  console.log('Получен запрос get');
 });
 
 app.use(bodyParser.json()); // for parsing application/json

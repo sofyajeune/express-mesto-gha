@@ -1,9 +1,14 @@
 const Users = require('../models/user');
+const {
+  BAD_REQUEST,
+  NOT_FOUND,
+  INTERNAL_SERVER_ERROR,
+} = require('../utils/resMessage');
 
 exports.getUsers = (req, res) => {
   Users.find({})
     .then((user) => res.send(user))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка!' }));
+    .catch(() => res.status(500).send(INTERNAL_SERVER_ERROR.RESPONSE));
 };
 
 exports.getUserById = (req, res) => {
@@ -12,14 +17,14 @@ exports.getUserById = (req, res) => {
       if (user) {
         res.status(200).send({ data: user });
       } else {
-        res.status(404).send({ message: 'Пользователь с указанными данными не найден!' });
+        res.status(404).send(NOT_FOUND.USER_RESPONSE);
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Переданы некорректные данные пользователя!' });
+        res.status(400).send(BAD_REQUEST.RESPONSE);
       } else {
-        res.status(500).send({ message: 'Произошла ошибка!' });
+        res.status(500).send(INTERNAL_SERVER_ERROR.RESPONSE);
       }
     });
 };
@@ -34,9 +39,9 @@ exports.createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
+        res.status(400).send(BAD_REQUEST.RESPONSE);
       } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+        res.status(500).send(INTERNAL_SERVER_ERROR.RESPONSE);
       }
     });
 };
@@ -49,9 +54,9 @@ exports.updateProfile = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные профиля!' });
+        res.status(400).send(BAD_REQUEST.RESPONSE);
       } else {
-        res.status(500).send({ message: 'Произошла ошибка!' });
+        res.status(500).send(INTERNAL_SERVER_ERROR.RESPONSE);
       }
     });
 };
@@ -69,9 +74,9 @@ exports.updateAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные аватара!' });
+        res.status(400).send(BAD_REQUEST.RESPONSE);
       } else {
-        res.status(500).send({ message: 'Произошла ошибка!' });
+        res.status(500).send(INTERNAL_SERVER_ERROR.RESPONSE);
       }
     });
 };

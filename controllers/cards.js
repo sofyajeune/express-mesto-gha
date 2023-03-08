@@ -1,14 +1,19 @@
 const Cards = require('../models/card');
+const {
+  OK,
+  BAD_REQUEST,
+  NOT_FOUND,
+  INTERNAL_SERVER_ERROR,
+} = require('../utils/resMessage');
 
 // Запрос для получения карточек
 exports.getCards = (req, res) => {
   Cards.find({})
     .then((card) => {
       res.status(200).send({ data: card });
-      res.status(400).send({ message: 'Карта не найдена!' });
     })
     .catch(() => {
-      res.status(500).send({ message: 'Произошла ошибка!' });
+      res.status(500).send(INTERNAL_SERVER_ERROR.RESPONSE);
     });
 };
 
@@ -24,9 +29,9 @@ exports.createCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Данные некорректны!' });
+        res.status(400).send(BAD_REQUEST.RESPONSE);
       } else {
-        res.status(500).send({ message: 'Произошла ошибка!' });
+        res.status(500).send(INTERNAL_SERVER_ERROR.RESPONSE);
       }
     });
 };
@@ -36,16 +41,16 @@ exports.deleteCard = (req, res) => {
   Cards.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (card) {
-        res.status(200).send({ message: 'Карта удалена' });
+        res.status(200).send(OK.DELETE_CARD_RESPONSE);
       } else {
-        res.status(404).send({ message: 'Карта не найдена' });
+        res.status(404).send(NOT_FOUND.CARD_RESPONSE);
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Данные некорректны!' });
+        res.status(400).send(BAD_REQUEST.RESPONSE);
       } else {
-        res.status(500).send({ message: 'Произошла ошибка!' });
+        res.status(500).send(INTERNAL_SERVER_ERROR.RESPONSE);
       }
     });
 };
@@ -61,16 +66,16 @@ exports.likeCard = (res, req) => {
   )
     .then((card) => {
       if (card) {
-        res.status(200).send({ message: 'Лайк есть!' });
+        res.status(200).send(OK.LIKE_CARD_RESPONSE);
       } else {
-        res.status(404).send({ message: 'Данные некорректны!' });
+        res.status(404).send(NOT_FOUND.CARD_RESPONSE);
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Данные введены некорректно' });
+        res.status(400).send(BAD_REQUEST.RESPONSE);
       } else {
-        res.status(500).send({ message: 'Произошла ошибка!' });
+        res.status(500).send(INTERNAL_SERVER_ERROR.RESPONSE);
       }
     });
 };
@@ -85,16 +90,16 @@ exports.dislikeCard = (res, req) => {
   )
     .then((card) => {
       if (card) {
-        res.status(200).send({ message: 'Лайк удалён!' });
+        res.status(200).send(OK.DISLIKE_CARD_RESPONSE);
       } else {
-        res.status(404).send({ message: 'Карта не найдена' });
+        res.status(404).send(NOT_FOUND.CARD_RESPONSE);
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Данные введены некорректно' });
+        res.status(400).send(BAD_REQUEST.RESPONSE);
       } else {
-        res.status(500).send({ message: 'Произошла ошибка!' });
+        res.status(500).send(INTERNAL_SERVER_ERROR.RESPONSE);
       }
     });
 };

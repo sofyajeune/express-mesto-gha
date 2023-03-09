@@ -55,7 +55,7 @@ exports.deleteCard = (req, res) => {
     });
 };
 
-exports.likeCard = (res, req) => {
+exports.likeCard = (req, res) => {
   const owner = req.user._id;
   Cards.findByIdAndUpdate(
     req.params.cardId,
@@ -80,7 +80,7 @@ exports.likeCard = (res, req) => {
     });
 };
 
-exports.dislikeCard = (res, req) => {
+exports.dislikeCard = (req, res) => {
   const owner = req.user._id;
   Cards.findByIdAndUpdate(
     req.params.cardId,

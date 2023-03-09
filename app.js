@@ -12,10 +12,6 @@ const app = express();
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 
-app.get('/', (req, res) => {
-  res.send('Приложение работает!');
-});
-
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -33,8 +29,10 @@ app.use((req, res, next) => {
 // Марштуризация
 app.use('/', usersRoutes);
 app.use('/', cardsRoutes);
+app.use(
+  (req, res) => {
+    res.status(404).send({ message: 'Страница не найдена' });
+  },
+);
 
-app.listen(PORT, () => {
-  // Если всё работает, консоль покажет, какой порт приложение слушает
-  console.log(`App listening on port ${PORT}`);
-});
+app.listen(PORT);

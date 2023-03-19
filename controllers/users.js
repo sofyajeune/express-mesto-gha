@@ -3,52 +3,75 @@ const bcrypt = require('bcrypt');
 // eslint-disable-next-line import/no-unresolved, import/extensions
 const { JWT_SECRET } = require('../app');
 const Users = require('../models/user');
-const {
-  BAD_REQUEST,
-  NOT_FOUND,
-  INTERNAL_SERVER_ERROR,
-} = require('../utils/resMessage');
+// const {
+//   BAD_REQUEST,
+//   NOT_FOUND,
+//   INTERNAL_SERVER_ERROR,
+// } = require('../utils/resMessage');
+const BadRequestError = require('../errors/BadRequestError');
+const DuplicateError = require('../errors/DuplicateError');
+const InternalServerError = require('../errors/InternalServerError');
+const NotFoundError = require('../errors/NotFoundError');
 
-exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   Users.find({})
-    .then((user) => res.send(user))
-    .catch(() => res.status(500).send(INTERNAL_SERVER_ERROR.RESPONSE));
-};
-
-exports.getUserById = (req, res) => {
-  Users.findById(req.params.userId)
-    .then((user) => {
-      if (user) {
-        res.status(200).send({ data: user });
-      } else {
-        res.status(404).send(NOT_FOUND.USER_RESPONSE);
-      }
-    })
+    .then((users) => res.send({ data: users }))
     .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(400).send(BAD_REQUEST.RESPONSE);
+      if (err.name === 'InternalServerError') {
+        next(new InternalServerError('На сервере произошла ошибка'));
       } else {
-        res.status(500).send(INTERNAL_SERVER_ERROR.RESPONSE);
+        next(err);
       }
     });
 };
 
-exports.createUser = (req, res) => {
-  const {
-    email, password, name, about, avatar,
-  } = req.body;
-  bcrypt.hash(password, 10)
-    .then((hash) => Users.create({
-      email, password: hash, name, about, avatar,
-    }))
+exports.getUserById = (req, res, next) => {
+  Users.findById(req.params.id)
     .then((user) => {
-      res.status(200).send(user);
+      if (!user) {
+        throw new NotFoundError('пользователя с несуществующим в БД id');
+      }
+      return res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(400).send(BAD_REQUEST.RESPONSE);
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Передан некорректный id'));
       } else {
-        res.status(500).send(INTERNAL_SERVER_ERROR.RESPONSE);
+        next(err);
+      }
+    });
+};
+
+module.exports.createUser = (req, res, next) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  Users.findOne({ email })
+    .then((user) => {
+      if (user) {
+        throw new DuplicateError('Пользователь с такой почтой уже зарегестрирован');
+      }
+      return bcrypt.hash(password, 10);
+    })
+    .then((hash) => Users.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    }))
+    .then((user) => res.send({
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      _id: user._id,
+      email: user.email,
+    }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+      } else {
+        next(err);
       }
     });
 };
@@ -67,37 +90,42 @@ module.exports.login = (req, res) => {
 };
 // При неправильных почте и пароле контроллер должен вернуть ошибку 401
 
-exports.updateProfile = (req, res) => {
+exports.updateProfile = (req, res, next) => {
   const { name, about } = req.body;
   Users.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
-      res.status(200).send(user);
+      if (!user) {
+        throw new NotFoundError('пользователя с несуществующим в БД id');
+      }
+      return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send(BAD_REQUEST.RESPONSE);
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+      } else if (err.name === 'InternalServerError') {
+        next(new InternalServerError('На сервере произошла ошибка'));
       } else {
-        res.status(500).send(INTERNAL_SERVER_ERROR.RESPONSE);
+        next(err);
       }
     });
 };
 
-exports.updateAvatar = (req, res) => {
+exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
-
-  Users.findByIdAndUpdate(
-    req.user._id,
-    { avatar },
-    { new: true, runValidators: true, upsert: true },
-  )
+  Users.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
-      res.status(200).send(user);
+      if (!user) {
+        throw new NotFoundError('пользователя с несуществующим в БД id');
+      }
+      return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send(BAD_REQUEST.RESPONSE);
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+      } else if (err.name === 'InternalServerError') {
+        next(new InternalServerError('На сервере произошла ошибка'));
       } else {
-        res.status(500).send(INTERNAL_SERVER_ERROR.RESPONSE);
+        next(err);
       }
     });
 };

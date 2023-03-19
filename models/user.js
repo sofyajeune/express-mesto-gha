@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const validator = require('validator'); // Валидатор
 // eslint-disable-next-line import/no-extraneous-dependencies
-const bcrypt = require('bcryptjs');
-const { UNAUTHORIZED } = require('../utils/resMessage'); // Ответы
+const bcrypt = require('bcrypt');
 const { avatarValidation } = require('../utils/validation'); // Рег выражение для валидации аватара
 
 // Схема для пользователя
@@ -53,21 +52,15 @@ userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        // eslint-disable-next-line prefer-promise-reject-errors
-        return Promise.reject({
-          statusCode: 401,
-          message: UNAUTHORIZED.USER_RESPONSE,
-        });
+        return Promise.reject(new Error('Неправильные почта или пароль'));
       }
+
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            // eslint-disable-next-line prefer-promise-reject-errors
-            return Promise.reject({
-              statusCode: 401,
-              message: UNAUTHORIZED.PASSWORD_RESPONSE,
-            });
+            return Promise.reject(new Error('Неправильные почта или пароль'));
           }
+
           return user;
         });
     });

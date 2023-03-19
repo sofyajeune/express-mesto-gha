@@ -18,7 +18,7 @@ module.exports.getUsers = (req, res, next) => {
     .then((users) => res.send({ data: users }))
     .catch((err) => {
       if (err.name === 'InternalServerError') {
-        next(new InternalServerError('На сервере произошла ошибка'));
+        next(new InternalServerError('Ошибка на сервере'));
       } else {
         next(err);
       }
@@ -29,7 +29,7 @@ exports.getUserById = (req, res, next) => {
   Users.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('пользователя с несуществующим в БД id');
+        throw new NotFoundError('Пользователь с таким именем не существует');
       }
       return res.send({ data: user });
     })
@@ -95,7 +95,7 @@ exports.updateProfile = (req, res, next) => {
   Users.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('пользователя с несуществующим в БД id');
+        throw new NotFoundError('Пользователь с таким именем не существует');
       }
       return res.send({ data: user });
     })
@@ -103,7 +103,7 @@ exports.updateProfile = (req, res, next) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
       } else if (err.name === 'InternalServerError') {
-        next(new InternalServerError('На сервере произошла ошибка'));
+        next(new InternalServerError('Ошибка на сервере'));
       } else {
         next(err);
       }
@@ -115,7 +115,7 @@ exports.updateAvatar = (req, res, next) => {
   Users.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('пользователя с несуществующим в БД id');
+        throw new NotFoundError('Пользователь с таким именем не существует');
       }
       return res.send({ data: user });
     })
@@ -123,7 +123,7 @@ exports.updateAvatar = (req, res, next) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
       } else if (err.name === 'InternalServerError') {
-        next(new InternalServerError('На сервере произошла ошибка'));
+        next(new InternalServerError('Ошибка на сервере'));
       } else {
         next(err);
       }

@@ -16,14 +16,14 @@ exports.getCards = (req, res, next) => {
     .populate(['owner', 'likes'])
     .then((cards) => {
       if (!cards) {
-        throw new NotFoundError('Пользователь по указанному _id не найден');
+        throw new NotFoundError('Фотография не найдена');
       }
       return res.send(cards);
     })
     //
     .catch((err) => {
       if (err.name === 'InternalServerError') {
-        next(new InternalServerError('На сервере произошла ошибка'));
+        next(new InternalServerError('Ошибка на сервере'));
       } else {
         next(err);
       }
@@ -40,7 +40,7 @@ exports.createCard = (req, res, next) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при создании карточки'));
       } else if (err.name === 'InternalServerError') {
-        next(new InternalServerError('На сервере произошла ошибка'));
+        next(new InternalServerError('Ошибка на сервере'));
       } else {
         next(err);
       }
@@ -53,16 +53,16 @@ exports.deleteCard = (req, res, next) => {
   Cards.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
-        throw new NotFoundError('Карточка с указанным _id не найдена.');
+        throw new NotFoundError('Фотография не найдена');
       } if (card.owner.valueOf() !== owner) {
-        throw new OwnerError('Карточка с указанным _id не найдена.');
+        throw new OwnerError('Фотография не найдена');
       }
       return card.remove()
         .then(() => res.send({ data: card }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new NotFoundError('Передан некорректный id'));
+        next(new NotFoundError('Фотография не найдена'));
       } else {
         next(err);
       }
@@ -77,7 +77,7 @@ exports.likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFoundError('Карточка с указанным _id не найдена.');
+        throw new NotFoundError('Фотография не найдена');
       }
       return res.send(card);
     })
@@ -85,7 +85,7 @@ exports.likeCard = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для постановки лайка.'));
       } else if (err.name === 'InternalServerError') {
-        next(new InternalServerError('На сервере произошла ошибка'));
+        next(new InternalServerError('Ошибка на сервере'));
       } else {
         next(err);
       }
@@ -100,7 +100,7 @@ exports.dislikeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFoundError('Карточка с указанным _id не найдена.');
+        throw new NotFoundError('Фотография не найдена');
       }
       return res.send(card);
     })
@@ -108,7 +108,7 @@ exports.dislikeCard = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для постановки лайка.'));
       } else if (err.name === 'InternalServerError') {
-        next(new InternalServerError('На сервере произошла ошибка'));
+        next(new InternalServerError('Ошибка на сервере'));
       } else {
         next(err);
       }

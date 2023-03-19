@@ -4,11 +4,12 @@ const { celebrate, Joi } = require('celebrate');
 const { avatarValidation } = require('../utils/validation');
 
 const {
-  getUsers, getUserById, updateAvatar, updateProfile,
+  getUsers, getUserById, updateAvatar, updateProfile, getUser,
 } = require('../controllers/users');
 
 // Маршрут получения юзеров
 usersRoutes.get('/users', getUsers);
+usersRoutes.get('/users/me', getUser);
 
 // Маршрут получения юзера
 usersRoutes.get('/users/:userId', celebrate({

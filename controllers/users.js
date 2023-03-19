@@ -25,6 +25,19 @@ module.exports.getUsers = (req, res, next) => {
     });
 };
 
+module.exports.getUser = (req, res, next) => {
+  Users.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь с таким именем не существует');
+      }
+      return res.send({ data: user });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 exports.getUserById = (req, res, next) => {
   Users.findById(req.params.id)
     .then((user) => {

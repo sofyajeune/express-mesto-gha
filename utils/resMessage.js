@@ -15,6 +15,11 @@ const resMessage = {
   INTERNAL_SERVER_ERROR: { // 500
     RESPONSE: { message: 'Произошла ошибка' },
   },
+  UNAUTHORIZED: { // 401
+    RESPONSE: { message: 'Нет авторизации' },
+    USER_RESPONSE: { message: 'Данный пользователь не найден' },
+    PASSWORD_RESPONSE: { message: 'Неверные данные' },
+  },
 };
 
 module.exports = resMessage;

@@ -20,3 +20,8 @@ usersRoutes.patch('/users/me', updateProfile);
 usersRoutes.patch('/users/me/avatar', updateAvatar);
 
 module.exports = usersRoutes;
+
+// сначала вызовется auth, а затем,
+// если авторизация успешна, createCard
+
+// app.post('/cards', auth, createCard);

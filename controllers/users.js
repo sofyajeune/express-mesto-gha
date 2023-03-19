@@ -1,3 +1,7 @@
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+// eslint-disable-next-line import/no-unresolved, import/extensions
+const { JWT_SECRET } = require('../app');
 const Users = require('../models/user');
 const {
   BAD_REQUEST,
@@ -30,10 +34,13 @@ exports.getUserById = (req, res) => {
 };
 
 exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-
-  Users.create({ name, about, avatar })
-    // user - ответ сервера
+  const {
+    email, password, name, about, avatar,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => Users.create({
+      email, password: hash, name, about, avatar,
+    }))
     .then((user) => {
       res.status(200).send(user);
     })
@@ -45,6 +52,20 @@ exports.createUser = (req, res) => {
       }
     });
 };
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return Users.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+      res.status(200).send({ token });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+    });
+};
+// При неправильных почте и пароле контроллер должен вернуть ошибку 401
 
 exports.updateProfile = (req, res) => {
   const { name, about } = req.body;

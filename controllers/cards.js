@@ -103,3 +103,11 @@ exports.dislikeCard = (req, res) => {
       }
     });
 };
+
+// controllers/cards.js
+
+// module.exports.createCard = (req, res) => Card.create({
+//   name: req.body.name,
+//   link: req.body.link,
+//   owner: req.user._id // используем req.user
+// });

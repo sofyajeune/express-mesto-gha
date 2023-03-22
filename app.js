@@ -8,6 +8,8 @@ const { errors } = require('celebrate');
 require('dotenv').config();
 const handleErrors = require('./middlewares/error');
 const router = require('./routes/index');
+const NotFoundError = require('./errors/NotFoundError');
+const auth = require('./middlewares/auth');
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
@@ -28,6 +30,9 @@ mongoose.connect('mongodb://localhost:27017/mestodb ');
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.all('*', auth, (req, res, next) => { // Все Неизвестные роуты
+  next(new NotFoundError('Ошибка 404. Страница не найдена!'));
+});
 app.use(router);
 app.use(errors());
 app.use(handleErrors);

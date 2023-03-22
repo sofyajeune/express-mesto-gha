@@ -1,6 +1,9 @@
 // eslint-disable-next-line no-useless-escape
-const avatarValidation = /(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.-]*)*\/?/i;
+const validationUrl = /(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.-]*)*\/?/i;
+
+const validationId = /[0-9a-f]{24}/i;
 
 module.exports = {
-  avatarValidation,
+  validationUrl,
+  validationId,
 };

@@ -1,6 +1,5 @@
-//
 const mongoose = require('mongoose');
-const validator = require('validator'); // Валидатор
+const { validationUrl } = require('../utils/validation'); // Рег выражение для валидации фото
 
 // Схема для карточек
 const cardSchema = new mongoose.Schema({
@@ -14,7 +13,7 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: validator.isURL,
+      validator: validationUrl,
       message: 'Необходимо ввести корректный URL',
     },
   },

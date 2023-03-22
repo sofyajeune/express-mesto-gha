@@ -16,7 +16,7 @@ const resMessage = {
     RESPONSE: { message: 'Произошла ошибка' },
   },
   UNAUTHORIZED: { // 401
-    RESPONSE: { message: 'Нет авторизации' },
+    RESPONSE: { message: 'Ннеобходима авторизация' },
     USER_RESPONSE: { message: 'Данный пользователь не найден' },
     PASSWORD_RESPONSE: { message: 'Неверные данные' },
   },

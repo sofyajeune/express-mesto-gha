@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = require('../app');
-const { UNAUTHORIZED } = require('../utils/resMessage'); // Ответы
+const { JWT_SECRET } = require('../config');
+const AuthorizedError = require('../errors/AuthorizedError');
 
 function extractBearerToken(header) {
   return header.replace('Bearer ', '');
@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    next({ statusCode: 401, message: UNAUTHORIZED.RESPONSE });
+    return next(new AuthorizedError('Необходима авторизация'));
   }
   const token = extractBearerToken(authorization);
   let payload;
@@ -19,7 +19,7 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
-    next({ statusCode: 401, message: UNAUTHORIZED.RESPONSE });
+    return next(new AuthorizedError('Необходима авторизация'));
   }
 
   req.user = payload;

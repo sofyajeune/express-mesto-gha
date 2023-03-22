@@ -1,28 +1,14 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-// eslint-disable-next-line import/no-unresolved, import/extensions
-const { JWT_SECRET } = require('../app');
+const { JWT_SECRET } = require('../config');
 const Users = require('../models/user');
-// const {
-//   BAD_REQUEST,
-//   NOT_FOUND,
-//   INTERNAL_SERVER_ERROR,
-// } = require('../utils/resMessage');
 const BadRequestError = require('../errors/BadRequestError');
-const DuplicateError = require('../errors/DuplicateError');
-const InternalServerError = require('../errors/InternalServerError');
 const NotFoundError = require('../errors/NotFoundError');
 
 module.exports.getUsers = (req, res, next) => {
   Users.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) => {
-      if (err.name === 'InternalServerError') {
-        next(new InternalServerError('Ошибка на сервере'));
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
 
 module.exports.getUser = (req, res, next) => {
@@ -33,9 +19,7 @@ module.exports.getUser = (req, res, next) => {
       }
       return res.send({ data: user });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 exports.getUserById = (req, res, next) => {
@@ -59,13 +43,7 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  Users.findOne({ email })
-    .then((user) => {
-      if (user) {
-        throw new DuplicateError('Пользователь с такой почтой уже зарегестрирован');
-      }
-      return bcrypt.hash(password, 10);
-    })
+  bcrypt.hash(password, 10)
     .then((hash) => Users.create({
       name,
       about,
@@ -89,7 +67,7 @@ module.exports.createUser = (req, res, next) => {
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return Users.findUserByCredentials(email, password)
@@ -97,9 +75,7 @@ module.exports.login = (req, res) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
       res.status(200).send({ token });
     })
-    .catch((err) => {
-      res.status(401).send({ message: err.message });
-    });
+    .catch(next);
 };
 // При неправильных почте и пароле контроллер должен вернуть ошибку 401
 
@@ -115,8 +91,6 @@ exports.updateProfile = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
-      } else if (err.name === 'InternalServerError') {
-        next(new InternalServerError('Ошибка на сервере'));
       } else {
         next(err);
       }
@@ -126,17 +100,10 @@ exports.updateProfile = (req, res, next) => {
 exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   Users.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь с таким именем не существует');
-      }
-      return res.send({ data: user });
-    })
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
-      } else if (err.name === 'InternalServerError') {
-        next(new InternalServerError('Ошибка на сервере'));
       } else {
         next(err);
       }

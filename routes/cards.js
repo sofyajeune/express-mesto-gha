@@ -1,7 +1,7 @@
 // Подключение роутов
-const cardRoutes = require('express').Router();
-// eslint-disable-next-line import/no-extraneous-dependencies
+const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const { validationUrl, validationId } = require('../utils/validation');
 
 // Импорт запросов API
 const {
@@ -9,35 +9,35 @@ const {
 } = require('../controllers/cards');
 
 // Маршрут получения карт
-cardRoutes.get('/cards', getCards);
+router.get('/cards', getCards);
 
 // Маршрут создания
-cardRoutes.post('/cards', celebrate({
+router.post('/cards', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
-    link: Joi.string().required().regex(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/),
+    link: Joi.string().required().pattern(validationUrl),
   }),
 }), createCard);
 
 // Маршрут удаления
-cardRoutes.delete('/cards/:cardId', celebrate({
+router.delete('/cards/:cardId', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().hex().length(24),
+    cardId: Joi.string().pattern(validationId),
   }),
 }), deleteCard);
 
 // Маршрут лайка
-cardRoutes.put('/cards/:cardId/likes', celebrate({
+router.put('/cards/:cardId/likes', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().hex().length(24),
+    cardId: Joi.string().pattern(validationId),
   }),
 }), likeCard);
 
 // Маршрут дизлайка
-cardRoutes.delete('/cards/:cardId/likes', celebrate({
+router.delete('/cards/:cardId/likes', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().hex().length(24),
+    cardId: Joi.string().pattern(validationId),
   }),
 }), dislikeCard);
 
-module.exports = cardRoutes;
+module.exports = router;

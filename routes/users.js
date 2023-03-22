@@ -1,20 +1,19 @@
-const usersRoutes = require('express').Router();
-// eslint-disable-next-line import/no-extraneous-dependencies
+const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const { avatarValidation } = require('../utils/validation');
+const { validationUrl, validationId } = require('../utils/validation');
 
 const {
   getUsers, getUserById, updateAvatar, updateProfile, getUser,
 } = require('../controllers/users');
 
 // Маршрут получения юзеров
-usersRoutes.get('/users', getUsers);
-usersRoutes.get('/users/me', getUser);
+router.get('/users', getUsers);
+router.get('/users/me', getUser);
 
 // Маршрут получения юзера
-usersRoutes.get('/users/:userId', celebrate({
+router.get('/users/:userId', celebrate({
   params: Joi.object().keys({
-    id: Joi.string().length(24).hex(),
+    userId: Joi.string().pattern(validationId),
   }),
 }), getUserById);
 
@@ -22,7 +21,7 @@ usersRoutes.get('/users/:userId', celebrate({
 // usersRoutes.post('/users', createUser);
 
 // Маршрут обновления инфы о себе
-usersRoutes.patch('/users/me', celebrate({
+router.patch('/users/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
     about: Joi.string().min(2).max(30).required(),
@@ -30,15 +29,10 @@ usersRoutes.patch('/users/me', celebrate({
 }), updateProfile);
 
 // Маршрут обновления своего аватара
-usersRoutes.patch('/users/me/avatar', celebrate({
+router.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().pattern(avatarValidation),
+    avatar: Joi.string().pattern(validationUrl),
   }),
 }), updateAvatar);
 
-module.exports = usersRoutes;
-
-// сначала вызовется auth, а затем,
-// если авторизация успешна, createCard
-
-// app.post('/cards', auth, createCard);
+module.exports = router;

@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit'); // Защита от DDOS, лимиты
 const helmet = require('helmet');// Защита от XSS attack
 const { errors } = require('celebrate');
-require('dotenv').config();
 const handleErrors = require('./middlewares/error');
 const router = require('./routes/index');
 const NotFoundError = require('./errors/NotFoundError');
@@ -29,8 +28,12 @@ mongoose.connect('mongodb://localhost:27017/mestodb ');
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(auth);
 
-app.all('*', auth, (req, res, next) => { // Все Неизвестные роуты
+app.use('/', require('./routes/users'));
+app.use('/', require('./routes/cards'));
+
+app.all('*', auth, (req, res, next) => {
   next(new NotFoundError('Ошибка 404. Страница не найдена!'));
 });
 app.use(router);

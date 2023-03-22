@@ -1,6 +1,5 @@
 const Cards = require('../models/card');
 const BadRequestError = require('../errors/BadRequestError');
-const InternalServerError = require('../errors/InternalServerError');
 const NotFoundError = require('../errors/NotFoundError');
 const OwnerError = require('../errors/OwnerError');
 
@@ -9,13 +8,7 @@ exports.getCards = (req, res, next) => {
   Cards.find({})
     .populate(['owner', 'likes'])
     .then((cards) => res.status(200).send({ data: cards }))
-    .catch((err) => {
-      if (err.name === 'InternalServerError') {
-        next(new InternalServerError('Ошибка на сервере'));
-      } else {
-        next(err);
-      }
-    });
+    .catch((err) => next(err));
 };
 
 // Запрос создания карт
@@ -27,8 +20,6 @@ exports.createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при создании карточки'));
-      } else if (err.name === 'InternalServerError') {
-        next(new InternalServerError('Ошибка на сервере'));
       } else {
         next(err);
       }
@@ -72,8 +63,6 @@ exports.likeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для постановки лайка.'));
-      } else if (err.name === 'InternalServerError') {
-        next(new InternalServerError('Ошибка на сервере'));
       } else {
         next(err);
       }
@@ -95,8 +84,6 @@ exports.dislikeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для постановки лайка.'));
-      } else if (err.name === 'InternalServerError') {
-        next(new InternalServerError('Ошибка на сервере'));
       } else {
         next(err);
       }

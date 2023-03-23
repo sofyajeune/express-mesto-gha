@@ -26,7 +26,7 @@ exports.createCard = (req, res, next) => {
     });
 };
 
-// Запрос удаления
+// Запрос удаления, попробовала с orfail
 exports.deleteCard = (req, res, next) => {
   Cards.findById(req.params.cardId)
     .orFail(() => {

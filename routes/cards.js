@@ -1,4 +1,3 @@
-// Подключение роутов
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { validationUrl, validationId } = require('../utils/validation');

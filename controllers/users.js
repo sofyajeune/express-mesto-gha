@@ -24,7 +24,7 @@ module.exports.getUser = (req, res, next) => {
 };
 
 exports.getUserById = (req, res, next) => {
-  Users.findById(req.params.id)
+  Users.findById(req.params.userId)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь с таким именем не существует');

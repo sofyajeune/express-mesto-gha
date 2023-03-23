@@ -4,6 +4,7 @@ const { JWT_SECRET } = require('../config');
 const Users = require('../models/user');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
+const DuplicateError = require('../errors/DuplicateError');
 
 module.exports.getUsers = (req, res, next) => {
   Users.find({})
@@ -59,7 +60,9 @@ module.exports.createUser = (req, res, next) => {
       email: user.email,
     }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.code === 11000) {
+        next(new DuplicateError('Пользователь с такой почтой уже зарегистрирован'));
+      } else if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
       } else {
         next(err);
@@ -100,7 +103,12 @@ exports.updateProfile = (req, res, next) => {
 exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   Users.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь с таким именем не существует');
+      }
+      return res.send(user);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при создании пользователя'));

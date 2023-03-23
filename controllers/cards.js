@@ -56,7 +56,7 @@ exports.likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFoundError('Лайк не найден');
+        throw new NotFoundError('Фотография не найдена');
       }
       return res.send(card);
     })

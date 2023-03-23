@@ -28,15 +28,11 @@ mongoose.connect('mongodb://localhost:27017/mestodb ');
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(auth);
-
-app.use('/', require('./routes/users'));
-app.use('/', require('./routes/cards'));
 
 app.all('*', auth, (req, res, next) => {
   next(new NotFoundError('Ошибка 404. Страница не найдена!'));
 });
-app.use(router);
+app.use(router, auth);
 app.use(errors());
 app.use(handleErrors);
 

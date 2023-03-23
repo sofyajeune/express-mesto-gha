@@ -13,7 +13,7 @@ router.get('/users/me', getUser);
 // Маршрут получения юзера
 router.get('/users/:userId', celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().pattern(validationId),
+    userId: Joi.string().required().pattern(validationId),
   }),
 }), getUserById);
 
@@ -31,7 +31,7 @@ router.patch('/users/me', celebrate({
 // Маршрут обновления своего аватара
 router.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().pattern(validationUrl),
+    avatar: Joi.string().required().pattern(validationUrl),
   }),
 }), updateAvatar);
 

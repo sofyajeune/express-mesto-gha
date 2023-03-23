@@ -42,22 +42,18 @@ exports.getUserById = (req, res, next) => {
 
 module.exports.createUser = (req, res, next) => {
   const {
-    name, about, avatar, email, password,
+    email, password, name, about, avatar,
   } = req.body;
+
   bcrypt.hash(password, 10)
     .then((hash) => Users.create({
-      name,
-      about,
-      avatar,
-      email,
-      password: hash,
+      email, password: hash, name, about, avatar,
     }))
-    .then((user) => res.send({
+    .then((user) => res.status(201).send({
+      email: user.email,
       name: user.name,
       about: user.about,
       avatar: user.avatar,
-      _id: user._id,
-      email: user.email,
     }))
     .catch((err) => {
       if (err.code === 11000) {

@@ -76,7 +76,7 @@ module.exports.login = (req, res, next) => {
     })
     .catch(next);
 };
-// При неправильных почте и пароле контроллер должен вернуть ошибку 401
+// При неправильных почте и пароле контроллер должен вернуть ошибку 401(а он не возвращает...)
 
 exports.updateProfile = (req, res, next) => {
   const { name, about } = req.body;

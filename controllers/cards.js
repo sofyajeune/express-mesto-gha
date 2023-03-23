@@ -28,20 +28,25 @@ exports.createCard = (req, res, next) => {
 
 // Запрос удаления
 exports.deleteCard = (req, res, next) => {
-  const owner = req.user._id;
   Cards.findById(req.params.cardId)
+    .orFail(() => {
+      throw new NotFoundError('Фотография не найдена');
+    })
     .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Фотография не найдена');
-      } if (card.owner.valueOf() !== owner) {
-        throw new OwnerError('Фотография не найдена');
+      const owner = card.owner.toString();
+      if (req.user._id === owner) {
+        Cards.deleteOne(card)
+          .then(() => {
+            res.send(card);
+          })
+          .catch(next);
+      } else {
+        throw new OwnerError('Вы не можете удалить чужую карточку');
       }
-      return card.remove()
-        .then(() => res.send({ data: card }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new NotFoundError('Фотография не найдена'));
+        next(new NotFoundError('Некорректный id'));
       } else {
         next(err);
       }
@@ -54,11 +59,11 @@ exports.likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .orFail(() => {
+      throw new NotFoundError('Фотография не найдена');
+    })
     .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Фотография не найдена');
-      }
-      return res.send(card);
+      res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -75,11 +80,11 @@ exports.dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .orFail(() => {
+      throw new NotFoundError('Фотография не найдена');
+    })
     .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Фотография не найдена');
-      }
-      return res.send(card);
+      res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {

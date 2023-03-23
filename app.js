@@ -7,8 +7,6 @@ const helmet = require('helmet');// Защита от XSS attack
 const { errors } = require('celebrate');
 const handleErrors = require('./middlewares/error');
 const router = require('./routes/index');
-const NotFoundError = require('./errors/NotFoundError');
-const auth = require('./middlewares/auth');
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
@@ -29,10 +27,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb ');
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.all('*', auth, (req, res, next) => {
-  next(new NotFoundError('Ошибка 404. Страница не найдена!'));
-});
-app.use(router, auth);
+app.use(router);
 app.use(errors());
 app.use(handleErrors);
 

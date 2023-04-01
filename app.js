@@ -24,7 +24,18 @@ app.use(limiter); // Активация
 app.use(helmet());
 
 // Подключаемся к монго по адресу (mestodb — имя базы данных, которая будет создана.)
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+mongoose.set('strictQuery', true);
+mongoose
+  .connect('mongodb://0.0.0.0:27017/mestodb')
+  .then(() => {
+    // eslint-disable-next-line no-console
+    console.log('Database connected.');
+  })
+  .catch((err) => {
+    // eslint-disable-next-line no-console
+    console.error(err);
+  });
+
 app.use(cors());
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));

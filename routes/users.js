@@ -13,12 +13,12 @@ router.get('/users/me', getUser);
 // Маршрут получения юзера
 router.get('/users/:userId', celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().required().pattern(validationId),
+    userId: Joi.string().pattern(validationId),
   }),
 }), getUserById);
 
 // Маршрут создания юзера
-// usersRoutes.post('/users', createUser);
+// router.post('/users', createUser);
 
 // Маршрут обновления инфы о себе
 router.patch('/users/me', celebrate({

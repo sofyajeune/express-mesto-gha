@@ -79,7 +79,7 @@ module.exports.login = (req, res, next) => {
   return Users.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'key', { expiresIn: '7d' });
-      res.status(200).send({ login: token });
+      res.status(200).send({ token });
     })
     .catch(next);
 };

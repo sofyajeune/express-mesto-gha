@@ -27,7 +27,7 @@ app.use(limiter); // Активация
 app.use(helmet());
 
 // Подключаемся к монго по адресу (mestodb — имя базы данных, которая будет создана.)
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb ');
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));

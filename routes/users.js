@@ -1,11 +1,13 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { validationUrl, validationId } = require('../utils/validation');
+const auth = require('../middlewares/auth');
 
 const {
   getUsers, getUserById, updateAvatar, updateProfile, getUser,
 } = require('../controllers/users');
 
+router.use(auth);
 // Маршрут получения юзеров
 router.get('/users', getUsers);
 router.get('/users/me', getUser);
@@ -31,7 +33,7 @@ router.patch('/users/me', celebrate({
 // Маршрут обновления своего аватара
 router.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().pattern(validationUrl),
+    avatar: Joi.string().required().regex(validationUrl),
   }),
 }), updateAvatar);
 

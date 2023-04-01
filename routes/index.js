@@ -9,8 +9,8 @@ router.use(requestLogger); // подключаем логгер запросов
 
 router.use('/signup', require('./singup'));
 router.use('/signin', require('./singin'));
-router.use('/users', require('./users'));
-router.use('/cards', require('./cards'));
+router.use('/users', auth, require('./users'));
+router.use('/cards', auth, require('./cards'));
 
 router.use(errorLogger);
 

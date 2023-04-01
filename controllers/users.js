@@ -1,9 +1,7 @@
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const { JWT_SECRET } = require('../config');
 const Users = require('../models/user');
-
-const { JWT_SECRET, NODE_ENV } = require('../config');
-
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const DuplicateError = require('../errors/DuplicateError');
@@ -42,25 +40,20 @@ exports.getUserById = (req, res, next) => {
     });
 };
 
-// запрос post к регистрации
 module.exports.createUser = (req, res, next) => {
   const {
-    name, about, avatar, email, password,
+    email, password, name, about, avatar,
   } = req.body;
+
   bcrypt.hash(password, 10)
     .then((hash) => Users.create({
-      name,
-      about,
-      avatar,
-      email,
-      password: hash,
+      email, password: hash, name, about, avatar,
     }))
-    .then((user) => res.send({
+    .then((user) => res.status(201).send({
+      email: user.email,
       name: user.name,
       about: user.about,
       avatar: user.avatar,
-      _id: user._id,
-      email: user.email,
     }))
     .catch((err) => {
       if (err.code === 11000) {
@@ -78,11 +71,12 @@ module.exports.login = (req, res, next) => {
 
   return Users.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'key', { expiresIn: '7d' });
-      res.status(200).send({ login: token });
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+      res.status(200).send({ token });
     })
     .catch(next);
 };
+// При неправильных почте и пароле контроллер должен вернуть ошибку 401(а он не возвращает...)
 
 exports.updateProfile = (req, res, next) => {
   const { name, about } = req.body;

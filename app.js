@@ -15,8 +15,6 @@ const { PORT = 3000 } = process.env;
 // Создаем приложение
 const app = express();
 
-app.use(cors());
-
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // за 15 минут
   max: 100, // можно совершить максимум 100 запросов с одного IP
@@ -26,18 +24,8 @@ app.use(limiter); // Активация
 app.use(helmet());
 
 // Подключаемся к монго по адресу (mestodb — имя базы данных, которая будет создана.)
-mongoose.set('strictQuery', true);
-mongoose
-  .connect('mongodb://0.0.0.0:27017/mestodb')
-  .then(() => {
-    // eslint-disable-next-line no-console
-    console.log('Database connected.');
-  })
-  .catch((err) => {
-    // eslint-disable-next-line no-console
-    console.error(err);
-  });
-
+mongoose.connect('mongodb://localhost:27017/mestodb ');
+app.use(cors());
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);

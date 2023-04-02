@@ -3,13 +3,6 @@ const { celebrate, Joi } = require('celebrate');
 const { createUser } = require('../controllers/users');
 const { validationUrl } = require('../utils/validation');
 
-// Для ревью
-router.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
-
 // Роут для регистрации
 router.post('/', celebrate({
   body: Joi.object().keys({

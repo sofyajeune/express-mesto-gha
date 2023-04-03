@@ -43,9 +43,6 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// Но в случае аутентификации хеш пароля нужен. Чтобы это реализовать,
-// после вызова метода модели, нужно добавить вызов метода select,
-// передав ему строку +password
 // eslint-disable-next-line func-names
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')

@@ -1,7 +1,7 @@
 // Импортируем модули
 const express = require('express');
 const mongoose = require('mongoose');
-// const cors = require('cors');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit'); // Защита от DDOS, лимиты
 const helmet = require('helmet');// Защита от XSS attack
@@ -44,7 +44,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.use(cors());
+app.use(cors());
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);

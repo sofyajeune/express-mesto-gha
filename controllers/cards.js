@@ -16,6 +16,7 @@ exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Cards.create({ name, link, owner })
+    .then((card) => card.populate('owner'))
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -62,6 +63,7 @@ exports.likeCard = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Фотография не найдена');
     })
+    .then((card) => card.populate('likes', 'owner'))
     .then((card) => {
       res.send(card);
     })

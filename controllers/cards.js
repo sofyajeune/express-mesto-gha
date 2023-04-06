@@ -85,6 +85,7 @@ exports.dislikeCard = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Фотография не найдена');
     })
+    .then((card) => card.populate('likes', 'owner'))
     .then((card) => {
       res.send(card);
     })

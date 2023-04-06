@@ -46,7 +46,7 @@ mongoose
 //   next();
 // });
 
-app.use(cors({ origin: ['https://sofyajeune.mesto.nomoredomains.work/'] }));
+app.use(cors());
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);

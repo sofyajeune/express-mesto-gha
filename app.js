@@ -1,4 +1,5 @@
 // Импортируем модули
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -45,7 +46,7 @@ mongoose
 //   next();
 // });
 
-app.use(cors());
+app.use(cors({ origin: ['https://sofyajeune.mesto.nomoredomains.work/'] }));
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);

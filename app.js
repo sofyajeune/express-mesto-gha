@@ -50,6 +50,14 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);
 app.use(errorLogger);
+
+// Для ревью
+router.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 app.use(router);
 app.use(errors());
 app.use(handleErrors);

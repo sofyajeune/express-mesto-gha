@@ -1,14 +1,12 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { validationUrl, validationId } = require('../utils/validation');
-const auth = require('../middlewares/auth');
 
 // Импорт запросов API
 const {
   getCards, createCard, deleteCard, likeCard, dislikeCard,
 } = require('../controllers/cards');
 
-router.use(auth);
 // Маршрут получения карт
 router.get('/cards', getCards);
 
